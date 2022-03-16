@@ -1,0 +1,45 @@
+{
+  "name": "moleculer-mixins-kit",
+  "version": "0.0.1",
+  "description": "A moleculer helper(mixin)",
+  "main": "index.js",
+  "scripts": {
+    "deps": "npm-check -u",
+    "lint": "eslint --ext=.js src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "moleculer",
+    "nodejs",
+    "microservice"
+  ],
+  "author": "juandl",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "moleculer": "^0.14.0 || ^0.13.0 || ^0.12.0"
+  },
+  "engines": {
+    "node": ">= 8.x.x"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "lint-staged": "^12.3.5",
+    "moleculer": "^0.14.19",
+    "npm-check": "^5.9.2",
+    "prettier": "^2.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juandl/moleculer-mixins-kit.git"
+  },
+  "contributors": [
+    "Juan David <juand.business@gmail.com/>"
+  ],
+  "bugs": {
+    "url": "https://github.com/juandl/moleculer-mixins-kit/issues"
+  },
+  "homepage": "https://github.com/juandl/moleculer-mixins-kit#readme"
+}
