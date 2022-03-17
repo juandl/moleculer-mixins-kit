@@ -99,7 +99,7 @@ module.exports = {
            * Check local models and create instance
            */
           if (_.get(this.models, model.name, null)) {
-            model.instance = this.model[model.name];
+            model.instance = this.models[model.name];
 
             //Custom instance model
           } else if (model.instance) {
@@ -129,7 +129,7 @@ module.exports = {
         if (_.isEmpty(entity)) {
           if (actions.onNotFound) return actions.onNotFound();
 
-          return this.formatError(error);
+          throw this.formatError(error);
         }
 
         /**
@@ -146,7 +146,7 @@ module.exports = {
          */
         if (actions.onNotFound) return actions.onNotFound();
 
-        return this.formatError(error);
+        throw this.formatError(error);
       }
     },
     /**
@@ -156,8 +156,9 @@ module.exports = {
      * @param {String} params.uid
      * @param {String} params.code
      * @param {Object} params.extra
+     * @returns {Void}
      */
-    async formatError(params) {
+    formatError(params) {
       let { msg, uid = 'COMMON', code = 400, extra } = params;
 
       //Convert string to uppercase and change spaces for dots
