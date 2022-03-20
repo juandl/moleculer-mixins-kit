@@ -1,16 +1,21 @@
 'use strict';
 
-const mongoose = require('mongoose');
 const _ = require('lodash');
 
-//Default params
-const OPTS_MONGO = {};
+//Peer dependencies
+let mongoose;
 
-//Default Model Params
-const OPTS_MODELS = {
-  toJSON: { getters: true },
-  timestamps: true,
-};
+/**
+ * Check Peer dependencies
+ */
+try {
+  mongoose = require('mongoose');
+} catch (err) {
+  console.error('To use this mixins, you have to install some dependencies');
+}
+
+//Constants
+const { mongoose: DefaultConfig } = require('../config/database');
 
 /**
  * Mongoose Native Connector
@@ -60,7 +65,7 @@ module.exports = function createService(mongoUrl, opts = {}) {
       }
 
       //Assign default options to MongoDb
-      Object.assign(opts, OPTS_MONGO);
+      Object.assign(opts, DefaultConfig.db);
 
       /**
        * If models already exist, continue
@@ -109,9 +114,9 @@ module.exports = function createService(mongoUrl, opts = {}) {
              * and merge with default options
              */
             if (model.options) {
-              model.options = { ...OPTS_MODELS, ...model.options };
+              model.options = { ...DefaultConfig.model, ...model.options };
               //Define default options
-            } else model.options = OPTS_MODELS;
+            } else model.options = DefaultConfig.model;
 
             //Create schema model
             schemaModel = new mongoose.Schema(model.schema, model.options);
