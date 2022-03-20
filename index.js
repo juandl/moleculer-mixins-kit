@@ -1,5 +1,5 @@
 /*
- * moleculer-queues
+ * moleculer-mixins-kit
  * MIT Licensed
  */
 
