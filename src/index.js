@@ -124,6 +124,28 @@ module.exports = {
         entity = await onCall();
 
         /**
+         * If entity is a "boolean"
+         * if is false change entity to null
+         * if is true conver to string for next validation
+         * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
+         */
+        if (_.isBoolean(entity)) {
+          if (!entity) entity = null;
+          else entity = _.toString(entity);
+        }
+
+        /**
+         * If entity is a "number"
+         * if is > 0 change entity to string
+         * if is equal or same as cero change entity to null
+         * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
+         */
+        if (_.isNumber(entity)) {
+          if (entity > 0) entity = _.toString(entity);
+          else entity = null;
+        }
+
+        /**
          * If entity is empty (array or object) throw an error
          */
         if (_.isEmpty(entity)) {
