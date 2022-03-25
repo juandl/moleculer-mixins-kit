@@ -159,7 +159,7 @@ module.exports = {
      * @returns {Void}
      */
     formatError(params) {
-      let { msg, uid = 'COMMON', code = 400, extra } = params;
+      let { name, msg, uid = 'COMMON', code = 400, extra } = params;
 
       //Convert string to uppercase and change spaces for dots
       if (!uid.includes('COMMON')) {
@@ -167,7 +167,9 @@ module.exports = {
         uid = uid.replace(/\s/g, '.');
       }
 
-      throw new ErrorClass(msg, code, uid, extra);
+      if (!name) name = uid;
+
+      throw new ErrorClass(name, msg, code, uid, extra);
     },
   },
 };
