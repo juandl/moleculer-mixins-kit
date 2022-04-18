@@ -26,9 +26,11 @@ const { sequalize: DefaultConfig } = require('../config/database');
  * @param {Object} Config.model
  *
  */
-module.exports = function (Config = {}) {
+module.exports = function (Opts = {}) {
+  let Config = { ...DefaultConfig };
+
   //Assign default config
-  Object.assign(Config, DefaultConfig);
+  Object.assign(Config, Opts);
 
   if (!Config.url) {
     throw new Error('SequelizeMiddleware: Missing url connection');
