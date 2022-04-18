@@ -7,4 +7,9 @@ module.exports = {
       timestamps: true,
     },
   },
+  sequalize: {
+    url: null,
+    sequalize: {},
+    model: {},
+  },
 };
