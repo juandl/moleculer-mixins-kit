@@ -43,14 +43,14 @@ module.exports = function createService(mongoUrl, opts = {}) {
        * Assign models to parent service
        * @type {Object}
        */
-      this.models = {};
+      this.mongodb = {};
     },
 
     /**
      * Service started lifecycle event handler
      */
     async started() {
-      const modelSchemas = this.schema.models;
+      const modelSchemas = this.schema.mongodb;
 
       if (!mongoUrl) {
         throw new Error('moleculer-db-mongoose: Missing `mongoUrl`');
@@ -70,7 +70,7 @@ module.exports = function createService(mongoUrl, opts = {}) {
       /**
        * If models already exist, continue
        */
-      if (!_.isEmpty(this.models)) {
+      if (!_.isEmpty(this.mongodb)) {
         return Promise.resolve();
       }
 
@@ -125,7 +125,7 @@ module.exports = function createService(mongoUrl, opts = {}) {
             schemaModel = this.$mongod.model(model.name, schemaModel);
 
             //Assign to the service parent
-            _.set(this.models, model.name, schemaModel);
+            _.set(this.mongodb, model.name, schemaModel);
           }
         );
 
