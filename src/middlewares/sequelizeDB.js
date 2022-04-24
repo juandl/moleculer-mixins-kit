@@ -45,18 +45,15 @@ module.exports = function (Opts = {}) {
       /**
        * Create Sequelize Constructor in Broker
        */
-      broker.$sequelizeNode = null;
+      broker.$sequelize = null;
       /**
        * Create models list
        */
-      broker.$sequelize = {};
+      broker.sequelizedb = {};
 
-      if (
-        !broker.$sequelizeNode &&
-        !(broker.$sequelizeNode instanceof Sequelize)
-      ) {
+      if (!broker.$sequelize && !(broker.$sequelize instanceof Sequelize)) {
         //Create instance sequelize
-        broker.$sequelizeNode = new Sequelize(Config.url, {
+        broker.$sequelize = new Sequelize(Config.url, {
           define: Config.sequalize,
           dialectOptions: {
             ssl: {
@@ -74,17 +71,17 @@ module.exports = function (Opts = {}) {
       /**
        * Broker
        */
-      const { $sequelizeNode, $sequelize } = service.broker;
+      const { $sequelize, sequelizedb } = service.broker;
 
       /**
        * Service
        */
-      const { modelSql } = service.schema;
+      const modelSql = service.schema.sequelizedb;
 
       /**
        * If not sequalize instance or model found in the service, don't continue
        */
-      if (!$sequelizeNode || !modelSql) return;
+      if (!$sequelize || !modelSql) return;
 
       /**
        * Validate: Make sure model is defined
@@ -104,7 +101,7 @@ module.exports = function (Opts = {}) {
       }
 
       try {
-        await $sequelizeNode.authenticate();
+        await $sequelize.authenticate();
 
         //Define Default opts for each model
         let optsModel = Config.model;
@@ -115,7 +112,7 @@ module.exports = function (Opts = {}) {
         /**
          * Create model definition in broker
          */
-        $sequelize[modelSql.name] = $sequelizeNode.define(
+        sequelizedb[modelSql.name] = $sequelize.define(
           modelSql.model,
           modelSql.schema,
           optsModel
@@ -125,7 +122,7 @@ module.exports = function (Opts = {}) {
 
         return Promise.resolve();
       } catch (err) {
-        return $sequelizeNode.close().finally(() => Promise.reject(err));
+        return $sequelize.close().finally(() => Promise.reject(err));
       }
     },
     /**
@@ -135,12 +132,12 @@ module.exports = function (Opts = {}) {
       /**
        * Broker
        */
-      const { $sequelizeNode, $sequelize } = broker;
+      const { $sequelize, sequelizedb } = broker;
 
       /**
        * If not sequalize instance/services don't continue
        */
-      if (!$sequelizeNode || _.isEmpty(broker.services)) return;
+      if (!$sequelize || _.isEmpty(broker.services)) return;
 
       /**
        * Automatically create each relation
@@ -149,9 +146,9 @@ module.exports = function (Opts = {}) {
         if (!service) return;
 
         /**
-         * Service
+         * Model from service
          */
-        const { modelSql } = service.schema;
+        const modelSql = service.schema.sequelizedb;
 
         /**
          * If not model found or relations in the service, skip it
@@ -159,9 +156,9 @@ module.exports = function (Opts = {}) {
         if (!modelSql || _.isEmpty(modelSql.relations)) return;
 
         /**
-         * Get model from sequelize
+         * Get model parent (from broker)
          */
-        const _model = _.get($sequelize, modelSql.name, null);
+        const _model = _.get(sequelizedb, modelSql.name, null);
 
         //If not model found, skip it!
         if (!_model) return;
@@ -171,7 +168,7 @@ module.exports = function (Opts = {}) {
          */
         _.forEach(modelSql.relations, (item) => {
           //Get Internal Model
-          const _inModel = _.get($sequelize, item.model, null);
+          const _inModel = _.get(sequelizedb, item.model, null);
           //Get type relation from internal model
           const _inModelType = _.get(_inModel, item.type, null);
           //Create default logger message
@@ -204,10 +201,10 @@ module.exports = function (Opts = {}) {
       /**
        * Broker
        */
-      const { $sequelizeNode } = broker;
+      const { $sequelize } = broker;
 
       //Close sequelizeNode
-      if ($sequelizeNode) $sequelizeNode.close();
+      if ($sequelize) $sequelize.close();
     },
   };
 };
