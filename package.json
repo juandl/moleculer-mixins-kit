@@ -1,6 +1,6 @@
 {
   "name": "moleculer-mixins-kit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "This makes Moleculer coding easier by taking the hassle out of working with models, brokers and etc",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "peerDependencies": {
     "moleculer": "^0.14.0 || ^0.13.0 || ^0.12.0",
     "mongoose": "^6.2.7",
+    "joi": "^17.6.0",
     "sequelize": "^6.13.0"
   },
   "engines": {
