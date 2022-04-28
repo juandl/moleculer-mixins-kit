@@ -6,6 +6,11 @@ const _ = require('lodash');
 const ErrorClass = require('./helpers/error');
 
 module.exports = {
+  settings: {
+    mixinsKit: {
+      model: null, //Model to be use for queryHelper and more
+    },
+  },
   methods: {
     /**
      *
@@ -18,6 +23,8 @@ module.exports = {
      * @param {function} params.actions.onFound - Return into a function if the entity is found
      * @param {function} params.actions.onNotFound - Return into a function if the entity is not found
      * @param {Object} params.model
+     * @param {String} params.model.name
+     * @param {String} params.model.type
      * @param {Function} params.model.action
      * @param {Array} params.model.populate
      * @param {Array} params.model.select
@@ -28,6 +35,10 @@ module.exports = {
      * @returns {Object|Array|Function}
      */
     async queryHelper(params = {}) {
+      //Get global settings
+      const mixinsKit = _.get(this.schema, 'settings.mixinsKit', null);
+
+      //Create Default State
       let state = {
         entity: null,
         query: {},
@@ -40,6 +51,8 @@ module.exports = {
           onNotFound: null, //Return into a function if the entity is not found
         },
         model: {
+          name: null, //Database Table name
+          type: 'findOne', //Database Query type
           action: null, //Database instance
           populate: [], //Populate data model (only mongodb)
           select: [], //Select specific data from model (only mongodb)
@@ -65,27 +78,31 @@ module.exports = {
         /**
          * Use broker to create query call
          */
-        if (broker) {
-          if (broker.name) {
-            //If broker nodeID is defined (call external services)
-            if (broker.node) {
-              _.set(broker, 'options.nodeID', broker.node);
-            }
-
-            //Create call
-            return this.broker.call(broker.name, query, broker.options);
+        if (_.get(broker, 'name', null)) {
+          //If broker nodeID is defined (call external services)
+          if (broker.node) {
+            _.set(broker, 'options.nodeID', broker.node);
           }
+
+          //Create call using broker
+          return this.broker.call(broker.name, query, broker.options);
         }
 
         /**
          * Use model to create query call
          */
-        if (model) {
+        if (_.get(model, 'name', null)) {
           /**
-           * Check instance
+           * If Model Action exists, create action instance
            */
-          if (!model.action) {
-            throw new Error('Not found any model action to call');
+          if (!mixinsKit.model && model.action) {
+            model.action = model.action[model.name][model.type];
+
+            /**
+             * If mixinsKit Model exists, create action instance
+             */
+          } else if (mixinsKit.model && !model.action) {
+            model.action = mixinsKit.model[model.name][model.type];
           }
 
           //Create call
@@ -95,7 +112,7 @@ module.exports = {
             .select(model.select);
         }
 
-        throw new Error('Not call function created');
+        throw new Error("MixinsKit: Can't create call queryHelper");
       };
 
       let { actions, entity, error } = state;
