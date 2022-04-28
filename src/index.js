@@ -18,9 +18,7 @@ module.exports = {
      * @param {function} params.actions.onFound - Return into a function if the entity is found
      * @param {function} params.actions.onNotFound - Return into a function if the entity is not found
      * @param {Object} params.model
-     * @param {String} params.model.name
-     * @param {String} params.model.type
-     * @param {Function} params.model.instance
+     * @param {Function} params.model.action
      * @param {Array} params.model.populate
      * @param {Array} params.model.select
      * @param {Object} params.broker
@@ -42,9 +40,7 @@ module.exports = {
           onNotFound: null, //Return into a function if the entity is not found
         },
         model: {
-          name: null, //Name of the model
-          type: 'findOne',
-          instance: null, //Database custom instance
+          action: null, //Database instance
           populate: [], //Populate data model (only mongodb)
           select: [], //Select specific data from model (only mongodb)
         },
@@ -85,29 +81,16 @@ module.exports = {
          * Use model to create query call
          */
         if (model) {
-          //Required name model
-          if (!model.name) {
-            throw new Error('Model name is required');
-          }
-
-          //Required type model action but default "findOne"
-          if (!model.type) {
-            model.type = 'findOne';
-          }
-
           /**
-           * Check local models and create instance
+           * Check instance
            */
-          if (_.get(this.models, model.name, null)) {
-            model.instance = this.models[model.name];
-
-            //Custom instance model
-          } else if (model.instance) {
-            model.instance = model.instance[model.name];
+          if (!model.action) {
+            throw new Error('Not found any model action to call');
           }
 
           //Create call
-          return model.instance[model.type](query)
+          return model
+            .action(query)
             .populate(model.populate)
             .select(model.select);
         }
