@@ -50,18 +50,8 @@ module.exports = {
           onFound: null, //Return into a function if the entity is found
           onNotFound: null, //Return into a function if the entity is not found
         },
-        model: {
-          name: null, //Database Table name
-          type: 'findOne', //Database Query type
-          action: null, //Database instance
-          populate: [], //Populate data model (only mongodb)
-          select: [], //Select specific data from model (only mongodb)
-        },
-        broker: {
-          name: null,
-          node: null,
-          options: {},
-        },
+        model: null,
+        broker: null,
       };
 
       /**
@@ -72,13 +62,17 @@ module.exports = {
       /**
        * Crate call based on broker/model
        */
-      const onCall = async () => {
+      const onCall = () => {
         let { broker, model, query } = state;
 
         /**
          * Use broker to create query call
          */
-        if (_.get(broker, 'name', null)) {
+        if (broker) {
+          if (!broker.name) {
+            throw new Error('Broker name is required');
+          }
+
           //If broker nodeID is defined (call external services)
           if (broker.node) {
             _.set(broker, 'options.nodeID', broker.node);
@@ -91,7 +85,18 @@ module.exports = {
         /**
          * Use model to create query call
          */
-        if (_.get(model, 'name', null)) {
+        if (model) {
+          if (!model.name) {
+            throw new Error('Model name is required');
+          }
+
+          /**
+           * If not type provided, keep default
+           */
+          if (!model.type) {
+            model.type = 'findOne';
+          }
+
           /**
            * If Model Action exists, create action instance
            */
