@@ -76,54 +76,58 @@ module.exports = function (Opts = {}) {
       /**
        * Service
        */
-      const modelSql = service.schema.sequelizedb;
+      const modelSqls = service.schema.sequelizedb;
 
       /**
        * If not sequalize instance or model found in the service, don't continue
        */
-      if (!$sequelize || !modelSql) return;
+      if (!$sequelize || _.isEmpty(modelSqls)) return;
 
-      /**
-       * Validate: Make sure model is defined
-       */
-      if (!modelSql.model) {
-        throw new Error(
-          'Missing `model.model` definition in schema of service!'
-        );
-      } else if (!modelSql.name) {
-        throw new Error(
-          'Missing `model.name` definition in schema of service!'
-        );
-      } else if (!modelSql.schema) {
-        throw new Error(
-          'Missing `model.schema` definition in schema of service!'
-        );
-      }
-
-      try {
-        await $sequelize.authenticate();
-
-        //Define Default opts for each model
-        let optsModel = Config.model;
-
-        //Assign new opts
-        if (modelSql.options) Object.assign(optsModel, modelSql.options);
-
+      for(let _key = 0; _key < modelSqls.length; _key++){
         /**
-         * Create model definition in broker
+         * Validate: Make sure model is defined
          */
-        sequelizedb[modelSql.name] = $sequelize.define(
-          modelSql.model,
-          modelSql.schema,
-          optsModel
-        );
+        if (!modelSqls[_key].model) {
+          throw new Error(
+            'Missing `model.model` definition in schema of service!'
+          );
+        } else if (!modelSqls[_key].name) {
+          throw new Error(
+            'Missing `model.name` definition in schema of service!'
+          );
+        } else if (!modelSqls[_key].schema) {
+          throw new Error(
+            'Missing `model.schema` definition in schema of service!'
+          );
+        }
 
-        this.logger.info(`Sequelize: ${modelSql.name} defined successfully.`);
+        try {
 
-        return Promise.resolve();
-      } catch (err) {
-        return $sequelize.close().finally(() => Promise.reject(err));
+          await $sequelize.authenticate();
+
+          //Define Default opts for each model
+          let optsModel = Config.model;
+
+          //Assign new opts
+          if (modelSqls[_key].options) Object.assign(optsModel, modelSqls[_key].options);
+
+          /**
+           * Create model definition in broker
+           */
+          sequelizedb[modelSqls[_key].name] = $sequelize.define(
+            modelSqls[_key].model,
+            modelSqls[_key].schema,
+            optsModel
+          );
+
+          this.logger.info(`Sequelize: ${modelSqls[_key].name} defined successfully.`);
+
+          return Promise.resolve();
+        } catch (err) {
+            return $sequelize.close().finally(() => Promise.reject(err));
+          }
       }
+
     },
     /**
      * Node start
@@ -148,49 +152,54 @@ module.exports = function (Opts = {}) {
         /**
          * Model from service
          */
-        const modelSql = service.schema.sequelizedb;
+        const modelSqls = service.schema.sequelizedb;
 
         /**
          * If not model found or relations in the service, skip it
          */
-        if (!modelSql || _.isEmpty(modelSql.relations)) return;
+        if (_.isEmpty(modelSqls)) return;
 
-        /**
-         * Get model parent (from broker)
-         */
-        const _model = _.get(sequelizedb, modelSql.name, null);
+        for(let _key = 0; _key < modelSqls.length; _key++){
 
-        //If not model found, skip it!
-        if (!_model) return;
+          if (_.isEmpty(modelSqls[_key].relations)) continue;
 
-        /**
-         * automatically create each relation
-         */
-        _.forEach(modelSql.relations, (item) => {
-          //Get Internal Model
-          const _inModel = _.get(sequelizedb, item.model, null);
-          //Get type relation from internal model
-          const _inModelType = _.get(_inModel, item.type, null);
-          //Create default logger message
-          const msgLogger = `Sequelize: Relation "${item.model} ${item.type}" - ${modelSql.name}`;
+          /**
+           * Get model parent (from broker)
+           */
+          const _model = _.get(sequelizedb, modelSqls[_key].name, null);
 
-          //If not internal model or type, skip it!
-          if (!_inModel || !_inModelType) {
-            this.logger.error(`${msgLogger}, Error!`);
-            return;
-          }
+          //If not model found, skip it!
+          if (!_model) return;
 
-          try {
-            this.logger.info(`${msgLogger}, Starting!`);
-            /**
-             * Create relation
-             * https://sequelize.org/v6/manual/assocs.html
-             */
-            _inModel[item.type](_model, item.params);
-          } catch {
-            this.logger.info(`${msgLogger}, Completed!`);
-          }
-        });
+          /**
+           * automatically create each relation
+           */
+          _.forEach(modelSqls[_key].relations, (item) => {
+            //Get Internal Model
+            const _inModel = _.get(sequelizedb, item.model, null);
+            //Get type relation from internal model
+            const _inModelType = _.get(_inModel, item.type, null);
+            //Create default logger message
+            const msgLogger = `Sequelize: Relation "${item.model} ${item.type}" - ${modelSqls[_key].name}`;
+
+            //If not internal model or type, skip it!
+            if (!_inModel || !_inModelType) {
+              this.logger.error(`${msgLogger}, Error!`);
+              return;
+            }
+
+            try {
+              this.logger.info(`${msgLogger}, Starting!`);
+              /**
+               * Create relation
+               * https://sequelize.org/v6/manual/assocs.html
+               */
+              _inModel[item.type](_model, item.params);
+            } catch {
+              this.logger.info(`${msgLogger}, Completed!`);
+            }
+          });
+        }
       });
     },
 
