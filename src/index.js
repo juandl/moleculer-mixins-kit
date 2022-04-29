@@ -101,18 +101,18 @@ module.exports = {
            * If Model Action exists, create action instance
            */
           if (!mixinsKit.model && model.action) {
-            model.action = model.action[model.name][model.type];
+            model.action = model.action[model.name];
 
             /**
              * If mixinsKit Model exists, create action instance
              */
           } else if (mixinsKit.model && !model.action) {
-            model.action = mixinsKit.model[model.name][model.type];
+            model.action = mixinsKit.model[model.name];
           }
 
           //Create call
           return model
-            .action(query)
+            .action[model.type](query)
             .populate(model.populate)
             .select(model.select);
         }
