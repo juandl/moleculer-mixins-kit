@@ -122,11 +122,12 @@ module.exports = function (Opts = {}) {
 
           this.logger.info(`Sequelize: ${modelSqls[_key].name} defined successfully.`);
 
-          return Promise.resolve();
         } catch (err) {
             return $sequelize.close().finally(() => Promise.reject(err));
           }
       }
+
+      return Promise.resolve();
 
     },
     /**
