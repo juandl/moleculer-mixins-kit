@@ -20,8 +20,8 @@ module.exports = {
      * @param {String} params.error.msg
      * @param {Number} params.error.code
      * @param {Object} params.actions
-     * @param {function} params.actions.onFound - Return into a function if the entity is found
-     * @param {function} params.actions.onNotFound - Return into a function if the entity is not found
+     * @param {function|boolean} params.actions.onFound - Return into a function if the entity is found
+     * @param {function|boolean} params.actions.onNotFound - Return into a function if the entity is not found
      * @param {Object} params.model
      * @param {String} params.model.name
      * @param {String} params.model.type
@@ -39,7 +39,7 @@ module.exports = {
       const mixinsKit = _.get(this.schema, 'settings.mixinsKit', null);
 
       //Create Default State
-      let state = {
+      let state = _.defaultsDeep(params, {
         entity: null,
         query: {},
         error: {
@@ -52,12 +52,7 @@ module.exports = {
         },
         model: null,
         broker: null,
-      };
-
-      /**
-       * Assign params to state
-       */
-      Object.assign(state, params);
+      });
 
       /**
        * Crate call based on broker/model
@@ -70,7 +65,7 @@ module.exports = {
          */
         if (broker) {
           if (!broker.name) {
-            throw new Error('Broker name is required');
+            throw new Error('MixinsKit: Broker name is required');
           }
 
           //If broker nodeID is defined (call external services)
@@ -87,7 +82,7 @@ module.exports = {
          */
         if (model) {
           if (!model.name) {
-            throw new Error('Model name is required');
+            throw new Error('MixinsKit: Model name is required');
           }
 
           /**
@@ -100,19 +95,22 @@ module.exports = {
           /**
            * If Model Action exists, create action instance
            */
-          if (!mixinsKit.model && model.action) {
-            model.action = model.action[model.name][model.type];
+          if (model.action) {
+            model.action = _.get(model.action, model.name, null);
 
             /**
              * If mixinsKit Model exists, create action instance
              */
-          } else if (mixinsKit.model && !model.action) {
-            model.action = mixinsKit.model[model.name][model.type];
+          } else if (mixinsKit.model) {
+            model.action = _.get(mixinsKit.model, model.name, null);
+          } else {
+            throw new Error(
+              'MixinsKit: Model action or mixinsKit model settings is required'
+            );
           }
 
           //Create call
-          return model
-            .action(query)
+          return model.action[model.type](query)
             .populate(model.populate)
             .select(model.select);
         }
@@ -125,56 +123,62 @@ module.exports = {
       /**
        * Request Call
        */
-      try {
-        entity = await onCall();
+
+      entity = await onCall();
+
+      /**
+       * If entity is a "boolean"
+       * if is false change entity to null
+       * if is true conver to string for next validation
+       * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
+       */
+      if (_.isBoolean(entity)) {
+        if (!entity) entity = null;
+        else entity = _.toString(entity);
+      }
+
+      /**
+       * If entity is a "number"
+       * if is > 0 change entity to string
+       * if is equal or same as cero change entity to null
+       * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
+       */
+      if (_.isNumber(entity)) {
+        if (entity > 0) entity = _.toString(entity);
+        else entity = null;
+      }
+
+      if (actions.onFound) {
+        /**
+         * If is empty dont' return anything
+         * Action will be ejected only if found entity.
+         */
+        if (_.isEmpty(entity)) return;
 
         /**
-         * If entity is a "boolean"
-         * if is false change entity to null
-         * if is true conver to string for next validation
-         * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
+         * If onFound is a function, return it instead
+         * and use as the "error" from state.error
          */
-        if (_.isBoolean(entity)) {
-          if (!entity) entity = null;
-          else entity = _.toString(entity);
-        }
-
-        /**
-         * If entity is a "number"
-         * if is > 0 change entity to string
-         * if is equal or same as cero change entity to null
-         * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
-         */
-        if (_.isNumber(entity)) {
-          if (entity > 0) entity = _.toString(entity);
-          else entity = null;
-        }
-
-        /**
-         * If entity is empty (array or object) throw an error
-         */
-        if (_.isEmpty(entity)) {
-          if (actions.onNotFound) return actions.onNotFound();
-
-          throw this.formatError(error);
-        }
-
-        /**
-         * If entity was found
-         */
-        if (actions.onFound) {
+        if (_.isFunction(actions.onFound)) {
           return actions.onFound(entity);
         }
 
-        return entity;
-      } catch (err) {
         /**
-         * If actions on not found is required
+         * If onFound is not an function, return error
+         * and use as the "error" from state.error
          */
+        throw this.formatError(error);
+      }
+      /**
+       * If entity is empty (array or object) throw an error
+       */
+      if (_.isEmpty(entity)) {
         if (actions.onNotFound) return actions.onNotFound();
 
         throw this.formatError(error);
       }
+
+      return entity;
     },
     /**
      * Format errors
@@ -198,5 +202,25 @@ module.exports = {
 
       throw new ErrorClass(name, msg, code, uid, extra);
     },
+  },
+  /**
+   * Service started lifecycle event handler
+   */
+  async started() {
+    let { settings } = this.schema;
+
+    /**
+     * Check if settings of mixinsKit exists on schema
+     */
+    if (settings.mixinsKit) {
+      let { model } = settings.mixinsKit;
+
+      /**
+       * Look for the model in "this"
+       */
+      if (model) {
+        settings.mixinsKit.model = _.get(this, model, null);
+      }
+    }
   },
 };
