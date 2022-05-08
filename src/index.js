@@ -190,17 +190,15 @@ module.exports = {
      * @returns {Void}
      */
     formatError(params) {
-      let { name, msg, uid = 'COMMON', code = 400, extra } = params;
+      let { msg, uid = 'COMMON', code = 400, extra } = params;
 
       //Convert string to uppercase and change spaces for dots
-      if (!uid.includes('COMMON')) {
+      if (uid !== 'COMMON') {
         uid = uid.toUpperCase();
         uid = uid.replace(/\s/g, '.');
       }
 
-      if (!name) name = uid;
-
-      throw new ErrorClass(name, msg, code, uid, extra);
+      throw new ErrorClass(msg, code, uid, extra);
     },
   },
   /**
