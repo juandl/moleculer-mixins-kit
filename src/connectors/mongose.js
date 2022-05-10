@@ -33,7 +33,7 @@ module.exports = function createService(mongoUrl, opts = {}) {
     /**
      * Service created lifecycle event handler
      */
-    async created() {
+    async started() {
       const modelSchemas = this.schema.mongodb;
 
       /**
