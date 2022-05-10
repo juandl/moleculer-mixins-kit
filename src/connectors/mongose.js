@@ -33,7 +33,9 @@ module.exports = function createService(mongoUrl, opts = {}) {
     /**
      * Service created lifecycle event handler
      */
-    created() {
+    async created() {
+      const modelSchemas = this.schema.mongodb;
+
       /**
        * Create mongodb constructor
        */
@@ -44,13 +46,6 @@ module.exports = function createService(mongoUrl, opts = {}) {
        * @type {Object}
        */
       this.mongodb = {};
-    },
-
-    /**
-     * Service started lifecycle event handler
-     */
-    async started() {
-      const modelSchemas = this.schema.mongodb;
 
       if (!mongoUrl) {
         throw new Error('moleculer-db-mongoose: Missing `mongoUrl`');
@@ -124,8 +119,9 @@ module.exports = function createService(mongoUrl, opts = {}) {
             //Create model
             schemaModel = this.$mongod.model(model.name, schemaModel);
 
+            this.mongodb[model.name] = schemaModel;
             //Assign to the service parent
-            _.set(this.mongodb, model.name, schemaModel);
+            // _.set(this.mongodb, model.name, schemaModel);
           }
         );
 
