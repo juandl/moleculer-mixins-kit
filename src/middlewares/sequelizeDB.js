@@ -126,7 +126,7 @@ module.exports = function (Opts = {}) {
       }
     },
     /**
-     * Node start
+     * This hook is called when service start already.
      */
     async started(broker) {
       /**

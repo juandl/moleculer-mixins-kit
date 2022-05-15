@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const kleur = require('kleur');
 
 //Peer dependencies
 let mongoose;
@@ -119,14 +120,15 @@ module.exports = function createService(mongoUrl, opts = {}) {
             //Create model
             schemaModel = this.$mongod.model(model.name, schemaModel);
 
-            this.mongodb[model.name] = schemaModel;
             //Assign to the service parent
-            // _.set(this.mongodb, model.name, schemaModel);
+            _.set(this.mongodb, model.name, schemaModel);
           }
         );
 
         this.logger.info(
-          `moleculer-db-mongoose: ${this.schema.name} Connection has been established successfully`
+          kleur.blue(
+            `moleculer-db-mongoose: ${this.schema.name} Connection has been established successfully`
+          )
         );
 
         return Promise.resolve();
