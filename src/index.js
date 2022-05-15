@@ -109,7 +109,18 @@ module.exports = {
             );
           }
 
-          //Create call
+          /**
+           * If query contains, use sql query format
+           * Todo: Find a better way to know the dialect of the query
+           */
+          if (_.get(query, 'where', null)) {
+            //Create call
+            return model.action[model.type](query);
+          }
+
+          /**
+           * Default query dialect is "mongodb"
+           */
           return model.action[model.type](query)
             .populate(model.populate)
             .select(model.select);
