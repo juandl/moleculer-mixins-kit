@@ -211,6 +211,15 @@ module.exports = {
 
       throw new ErrorClass(msg, code, uid, extra);
     },
+    /**
+     *
+     * @param {String|Number} value - String/Number value
+     * @param {Integer} precision - Decimal places
+     * @returns
+     */
+    parseNumberDec(value, precision = 3) {
+			return parseFloat(parseFloat(value).toFixed(precision));
+		},
   },
   /**
    * Service started lifecycle event handler
