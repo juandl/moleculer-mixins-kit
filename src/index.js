@@ -211,6 +211,23 @@ module.exports = {
 
       throw new ErrorClass(msg, code, uid, extra);
     },
+    /**
+     *
+     * @param {String|Number} value - String/Number value
+     * @param {Integer} precision - Decimal places
+     * @returns
+     */
+    parseNumberDec(value, precision = 3) {
+	return parseFloat(parseFloat(value).toFixed(precision));
+    },
+    /**
+     * Create a random 10-digit number code
+     */
+    generateRandNum(digits) {
+      return _.round(
+        _.random(0, 1, true) * (10 ** digits)
+      );
+    },
   },
   /**
    * Service started lifecycle event handler
