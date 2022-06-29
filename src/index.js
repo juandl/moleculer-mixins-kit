@@ -218,8 +218,8 @@ module.exports = {
      * @returns
      */
     parseNumberDec(value, precision = 3) {
-			return parseFloat(parseFloat(value).toFixed(precision));
-		},
+	return parseFloat(parseFloat(value).toFixed(precision));
+    },
     /**
      * Create a random 10-digit number code
      */
