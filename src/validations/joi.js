@@ -9,8 +9,12 @@ class JoiValidator extends BaseValidator {
 
     this.Joi = require('joi');
   }
+  
   compile(schema) {
-    return (params) => this.validate(params, schema);
+    //Check if schema is joi format
+    if(_.get(schema, '$_root', null)){
+      return (params) => this.validate(params, schema);
+    }
   }
 
   /**
