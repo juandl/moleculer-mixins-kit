@@ -9,12 +9,15 @@ class JoiValidator extends BaseValidator {
 
     this.Joi = require('joi');
   }
-  
+
   compile(schema) {
     //Check if schema is joi format
-    if(_.get(schema, '$_root', null)){
+    if (_.isFunction(schema)) {
       return (params) => this.validate(params, schema);
     }
+
+    //Use fastest-validator
+    return this.validator.compile(schema);
   }
 
   /**
@@ -30,10 +33,16 @@ class JoiValidator extends BaseValidator {
     return _.replace(msg, /([^\w\d\s])+/g, '');
   }
 
+  /**
+   * Validate joi schema
+   * @param {Object} params
+   * @param {*} schema
+   * @returns
+   */
   validate(params, schema) {
     let errors = [];
 
-    if (!this.Joi.isSchema(schema)) {
+    if (!this.Joi.isSchema(schema) && _.isFunction(schema)) {
       throw new ValidationError('Not Joi Schema', null, {
         message: 'No Schema Joi',
       });

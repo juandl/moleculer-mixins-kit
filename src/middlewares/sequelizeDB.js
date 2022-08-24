@@ -10,7 +10,7 @@ let Sequelize;
 try {
   Sequelize = require('sequelize').Sequelize;
 } catch (err) {
-  console.error('To use this mixins, you have to install some dependencies');
+  console.error('To use sequelize, you have to install some dependencies');
 }
 
 //Constants

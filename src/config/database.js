@@ -1,7 +1,8 @@
 //Default params
 module.exports = {
   mongoose: {
-    db: {},
+    db: {}, //Database settings
+    url: {}, // connection url
     model: {
       toJSON: { getters: true },
       timestamps: true,
