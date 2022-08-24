@@ -17,7 +17,7 @@ class JoiValidator extends BaseValidator {
     }
 
     //Use fastest-validator
-    return this.validator.compile(schema);
+    // return this.validator.compile(schema);
   }
 
   /**
