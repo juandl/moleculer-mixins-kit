@@ -12,12 +12,13 @@ class JoiValidator extends BaseValidator {
 
   compile(schema) {
     //Check if schema is joi format
-    if (_.isFunction(schema)) {
-      return (params) => this.validate(params, schema);
-    }
+    if (this.Joi.isSchema(schema)) {
 
-    //Use fastest-validator
-    // return this.validator.compile(schema);
+      return (params) => this.validate(params, schema);
+    } else if(this.validator) {
+      //Use fastest-validator
+      return this.validator.compile(schema);
+    }
   }
 
   /**
