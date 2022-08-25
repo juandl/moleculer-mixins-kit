@@ -193,6 +193,7 @@ module.exports = {
     },
     /**
      * Format errors
+     * @deprecated Since version 0.2.8. Will be deleted in version 0.2.9. Use throwError() instead.
      * @param {Object} params
      * @param {String} params.msg
      * @param {String} params.uid
@@ -201,7 +202,7 @@ module.exports = {
      * @returns {Void}
      */
     formatError(params) {
-      let { msg, uid = 'COMMON', code = 400, extra } = params;
+      let { msg = 'Request error', uid = 'COMMON', code = 400, extra } = params;
 
       //Convert string to uppercase and change spaces for dots
       if (uid !== 'COMMON') {
@@ -212,21 +213,44 @@ module.exports = {
       throw new ErrorClass(msg, code, uid, extra);
     },
     /**
+     * Format errors
+     * @param {Object} params
+     * @param {String} params.message
+     * @param {String} params.uid
+     * @param {String} params.code
+     * @param {Object} params.extra
+     * @returns {Error}
+     */
+    throwError(params) {
+      let {
+        message = 'Request error',
+        uid = 'COMMON',
+        code = 400,
+        extra,
+      } = params;
+
+      //Convert string to uppercase and change spaces for dots
+      if (uid !== 'COMMON') {
+        uid = uid.toUpperCase();
+        uid = uid.replace(/\s/g, '.');
+      }
+
+      throw new ErrorClass(message, code, uid, extra);
+    },
+    /**
      *
      * @param {String|Number} value - String/Number value
      * @param {Integer} precision - Decimal places
      * @returns
      */
     parseNumberDec(value, precision = 3) {
-	return parseFloat(parseFloat(value).toFixed(precision));
+      return parseFloat(parseFloat(value).toFixed(precision));
     },
     /**
      * Create a random 10-digit number code
      */
     generateRandNum(digits) {
-      return _.round(
-        _.random(0, 1, true) * (10 ** digits)
-      );
+      return _.round(_.random(0, 1, true) * 10 ** digits);
     },
   },
   /**
