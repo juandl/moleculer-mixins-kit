@@ -13,9 +13,8 @@ class JoiValidator extends BaseValidator {
   compile(schema) {
     //Check if schema is joi format
     if (this.Joi.isSchema(schema)) {
-
       return (params) => this.validate(params, schema);
-    } else if(this.validator) {
+    } else if (this.validator) {
       //Use fastest-validator
       return this.validator.compile(schema);
     }
@@ -49,6 +48,12 @@ class JoiValidator extends BaseValidator {
       });
     }
 
+    // Check if is merged schema
+    if (_.get(params, 'body', null)) {
+      params = params.body;
+    }
+
+    //Validate schema
     const { error } = schema.validate(params, {
       abortEarly: true,
     });

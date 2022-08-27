@@ -17,7 +17,7 @@ module.exports = {
      * @param {Object} params
      * @param {Object} params.query
      * @param {Object} params.error
-     * @param {String} params.error.msg
+     * @param {String} params.error.message
      * @param {Number} params.error.code
      * @param {Object} params.actions
      * @param {function|boolean} params.actions.onFound - Return into a function if the entity is found
@@ -43,7 +43,7 @@ module.exports = {
         entity: null,
         query: {},
         error: {
-          msg: 'Not found query entity',
+          message: 'Not found query entity',
           code: 400,
         },
         actions: {
@@ -129,13 +129,11 @@ module.exports = {
         throw new Error("MixinsKit: Can't create call queryHelper");
       };
 
-      let { actions, entity, error } = state;
-
       /**
        * Request Call
        */
 
-      entity = await onCall();
+      state.entity = await onCall();
 
       /**
        * If entity is a "boolean"
@@ -143,9 +141,9 @@ module.exports = {
        * if is true conver to string for next validation
        * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
        */
-      if (_.isBoolean(entity)) {
-        if (!entity) entity = null;
-        else entity = _.toString(entity);
+      if (_.isBoolean(state.entity)) {
+        if (!state.entity) state.entity = null;
+        else state.entity = _.toString(state.entity);
       }
 
       /**
@@ -154,42 +152,43 @@ module.exports = {
        * if is equal or same as cero change entity to null
        * why? lodash "isEmpty" works with only enumerable variables (Object, Array, Sets, Map, Buffer etc).
        */
-      if (_.isNumber(entity)) {
-        if (entity > 0) entity = _.toString(entity);
-        else entity = null;
+      if (_.isNumber(state.entity)) {
+        if (state.entity > 0) state.entity = _.toString(state.entity);
+        else state.entity = null;
       }
 
-      if (actions.onFound) {
+      if (state.actions.onFound) {
         /**
          * If is empty dont' return anything
          * Action will be ejected only if found entity.
          */
-        if (_.isEmpty(entity)) return;
+        if (_.isEmpty(state.entity)) return;
 
         /**
          * If onFound is a function, return it instead
          * and use as the "error" from state.error
          */
-        if (_.isFunction(actions.onFound)) {
-          return actions.onFound(entity);
+        if (_.isFunction(state.actions.onFound)) {
+          return state.actions.onFound(state.entity);
         }
 
         /**
          * If onFound is not an function, return error
          * and use as the "error" from state.error
          */
-        throw this.formatError(error);
+        throw this.throwError(state.error);
       }
       /**
        * If entity is empty (array or object) throw an error
        */
-      if (_.isEmpty(entity)) {
-        if (actions.onNotFound) return actions.onNotFound();
+      if (_.isEmpty(state.entity)) {
+        if (state.actions.onNotFound)
+          return state.actions.onNotFound(state.error);
 
-        throw this.formatError(error);
+        throw this.throwError(state.error);
       }
 
-      return entity;
+      return state.entity;
     },
     /**
      * Format errors
