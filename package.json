@@ -1,12 +1,14 @@
 {
   "name": "moleculer-mixins-kit",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "This makes Moleculer coding easier by taking the hassle out of working with models, brokers and etc",
   "main": "index.js",
+  "types": "./src/types.d.ts",
   "scripts": {
     "deps": "npm-check -u",
     "lint": "eslint --ext=.js src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "types-generate": "npx -p typescript tsc"
   },
   "keywords": [
     "moleculer",
@@ -33,7 +35,8 @@
     "lint-staged": "^12.3.5",
     "moleculer": "^0.14.19",
     "npm-check": "^5.9.2",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "typescript": "^4.8.3"
   },
   "repository": {
     "type": "git",

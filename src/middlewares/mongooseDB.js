@@ -12,7 +12,9 @@ let mongoose;
 try {
   mongoose = require('mongoose');
 } catch (err) {
-  console.error('To use mongoose middleware, you have to install some dependencies');
+  console.error(
+    'To use mongoose middleware, you have to install some dependencies'
+  );
 }
 
 //Constants
@@ -105,7 +107,7 @@ module.exports = function (Opts = {}) {
         models,
         (
           /**
-           * @type {{name: string, schema: Object, options: object}}
+           * @type {ModelTypeSchema}
            */
           model
         ) => {
@@ -140,9 +142,70 @@ module.exports = function (Opts = {}) {
             //Create schema model
             schema = new mongoose.Schema(model.schema, model.options);
 
-            //Assign plugin if has
+            //Assign plugins
             if (!_.isEmpty(model.plugins)) {
               _.forEach(model.plugins, (plugin) => schema.plugin(plugin));
+            }
+
+            /**
+             * Create hooks model
+             */
+            if (model.hooks) {
+              /**
+               * Assign pre/post validation
+               * https://mongoosejs.com/docs/middleware.html#order
+               */
+              if (model.hooks.preValidate) {
+                schema.pre('validate', async function (doc, next) {
+                  await model.preValidate({
+                    doc,
+                    model: this.model,
+                    broker: service.broker,
+                  });
+
+                  next();
+                });
+              }
+
+              if (model.hooks.postValidate) {
+                schema.post('validate', async function (doc, next) {
+                  await model.postValidate({
+                    doc,
+                    model: this.model,
+                    broker: service.broker,
+                  });
+
+                  next();
+                });
+              }
+
+              /**
+               * Assign pre/post save
+               * https://mongoosejs.com/docs/middleware.html#order
+               */
+              if (model.hooks.preSave) {
+                schema.pre('save', async function (doc, next) {
+                  await model.prevSave({
+                    doc,
+                    model: this.model,
+                    broker: service.broker,
+                  });
+
+                  next();
+                });
+              }
+
+              if (model.hooks.postSave) {
+                schema.post('save', async function (doc, next) {
+                  await model.postSave({
+                    doc,
+                    model: this.model,
+                    broker: service.broker,
+                  });
+
+                  next();
+                });
+              }
             }
 
             //Create model
@@ -173,3 +236,17 @@ module.exports = function (Opts = {}) {
     },
   };
 };
+
+/**
+ * Model Schema Tyoe
+ * @typedef {Object} ModelTypeSchema
+ * @property {String} name
+ * @property {Object} schema
+ * @property {Object} options
+ * @property {Array} plugins
+ * @property {Object} hooks
+ * @property {Function} hooks.preValidate
+ * @property {Function} hooks.postValidate
+ * @property {Function} hooks.preSave
+ * @property {Function} hooks.postSave
+ **/
