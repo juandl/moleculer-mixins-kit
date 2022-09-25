@@ -157,7 +157,7 @@ module.exports = function (Opts = {}) {
                */
               if (model.hooks.preValidate) {
                 schema.pre('validate', async function (doc, next) {
-                  await model.preValidate({
+                  await model.hooks.preValidate({
                     doc,
                     model: this.model,
                     broker: service.broker,
@@ -169,7 +169,7 @@ module.exports = function (Opts = {}) {
 
               if (model.hooks.postValidate) {
                 schema.post('validate', async function (doc, next) {
-                  await model.postValidate({
+                  await model.hooks.postValidate({
                     doc,
                     model: this.model,
                     broker: service.broker,
@@ -185,7 +185,7 @@ module.exports = function (Opts = {}) {
                */
               if (model.hooks.preSave) {
                 schema.pre('save', async function (doc, next) {
-                  await model.prevSave({
+                  await model.hooks.preSave({
                     doc,
                     model: this.model,
                     broker: service.broker,
@@ -197,7 +197,7 @@ module.exports = function (Opts = {}) {
 
               if (model.hooks.postSave) {
                 schema.post('save', async function (doc, next) {
-                  await model.postSave({
+                  await model.hooks.postSave({
                     doc,
                     model: this.model,
                     broker: service.broker,
