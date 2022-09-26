@@ -3,12 +3,14 @@ const _ = require('lodash');
  * Normalize builder
  * this helper help to normalize data using lodash,
  * to get each value using keys and values
- * @param {Object} builder
- * @param {Object} builder.data - data to normalize
- * @param {Array<{selector: string, field: string}>} builder.fields - fields to normalize
+ * @param {Object} opts
+ * @param {Object} opts.data - data to normalize
+ * @param {Array<{selector: string, field: string }>} opts.fields - fields to normalize
  *
  */
-const normalizeBuilder = ({ data, fields }) => {
+const normalizeBuilder = (opts) => {
+  const { data, fields } = _.defaultsDeep(opts.data, {});
+
   let entity = {};
 
   _.forEach(fields, (item) => {
