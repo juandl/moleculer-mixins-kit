@@ -377,4 +377,4 @@ declare module "helpers/normalize/cleaner" {
         fields: Array<string>;
     }): any;
 }
-//# sourceMappingURL=types.d.ts.map
+//# sourceMappingURL=index.d.ts.map

@@ -3,7 +3,7 @@
   "version": "0.2.16",
   "description": "This makes Moleculer coding easier by taking the hassle out of working with models, brokers and etc",
   "main": "index.js",
-  "types": "./src/types.d.ts",
+  "types": "index.d.ts",
   "scripts": {
     "deps": "npm-check -u",
     "lint": "eslint --ext=.js src",
