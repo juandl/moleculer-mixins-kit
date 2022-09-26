@@ -13,7 +13,7 @@ module.exports = {
   },
   methods: {
     /**
-     *
+     * QueryHelper
      * @param {Object} params
      * @param {Object} params.query
      * @param {Object} params.error

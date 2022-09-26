@@ -107,7 +107,7 @@ module.exports = function (Opts = {}) {
         models,
         (
           /**
-           * @type {ModelTypeSchema}
+           * @type {ModelMongooseTypeSchema}
            */
           model
         ) => {
@@ -223,7 +223,7 @@ module.exports = function (Opts = {}) {
 
 /**
  * Model Schema Tyoe
- * @typedef {Object} ModelTypeSchema
+ * @typedef {Object} ModelMongooseTypeSchema
  * @property {String} name
  * @property {Object} schema
  * @property {Object} options
