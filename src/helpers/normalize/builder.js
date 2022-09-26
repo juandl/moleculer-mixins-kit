@@ -18,7 +18,7 @@ const normalizeBuilder = (opts) => {
     let selected = _.get(data, item.selector, null);
 
     //If value is found, assign to entity based on field name
-    if (selected) {
+    if (selected !== undefined) {
       _.set(entity, item.field, selected);
     }
   });

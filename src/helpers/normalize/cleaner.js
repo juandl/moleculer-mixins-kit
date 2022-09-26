@@ -17,10 +17,10 @@ const normalizeCleaner = (opts) => {
 
   _.forEach(fields, (field) => {
     //Get value using selector
-    let selected = _.get(data, field, null);
+    let selected = _.get(data, field);
 
     //If value is found, assign to entity based on field name
-    if (selected) {
+    if (selected !== undefined) {
       _.unset(entity, field);
     }
   });
