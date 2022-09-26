@@ -1,6 +1,6 @@
 {
   "name": "moleculer-mixins-kit",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "This makes Moleculer coding easier by taking the hassle out of working with models, brokers and etc",
   "main": "index.js",
   "types": "index.d.ts",
