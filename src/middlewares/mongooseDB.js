@@ -150,62 +150,46 @@ module.exports = function (Opts = {}) {
             /**
              * Create hooks model
              */
-            if (model.hooks) {
+            if (!_.isEmpty(model.hooks)) {
               /**
-               * Assign pre/post validation
-               * https://mongoosejs.com/docs/middleware.html#order
+               * Create each hook
                */
-              if (model.hooks.preValidate) {
-                schema.pre('validate', async function (doc, next) {
-                  await model.hooks.preValidate({
-                    doc,
-                    model: this.model,
-                    broker: service.broker,
+              _.forEach(model.hooks, (hook) => {
+                //if not type, skip it.
+                if (!hook.type) return;
+
+                /**
+                 * Pre Hook
+                 * https://mongoosejs.com/docs/middleware.html#order
+                 */
+                if (hook.preHandler) {
+                  schema.pre(hook.type, async function (doc, next) {
+                    await hook.preHandler({
+                      doc,
+                      model: this.model,
+                      broker: service.broker,
+                    });
+
+                    next();
                   });
+                }
 
-                  next();
-                });
-              }
+                /**
+                 * Post Hook
+                 * https://mongoosejs.com/docs/middleware.html#order
+                 */
+                if (hook.postHandler) {
+                  schema.post(hook.type, async function (doc, next) {
+                    await hook.postHandler({
+                      doc,
+                      model: this.model,
+                      broker: service.broker,
+                    });
 
-              if (model.hooks.postValidate) {
-                schema.post('validate', async function (doc, next) {
-                  await model.hooks.postValidate({
-                    doc,
-                    model: this.model,
-                    broker: service.broker,
+                    next();
                   });
-
-                  next();
-                });
-              }
-
-              /**
-               * Assign pre/post save
-               * https://mongoosejs.com/docs/middleware.html#order
-               */
-              if (model.hooks.preSave) {
-                schema.pre('save', async function (doc, next) {
-                  await model.hooks.preSave({
-                    doc,
-                    model: this.model,
-                    broker: service.broker,
-                  });
-
-                  next();
-                });
-              }
-
-              if (model.hooks.postSave) {
-                schema.post('save', async function (doc, next) {
-                  await model.hooks.postSave({
-                    doc,
-                    model: this.model,
-                    broker: service.broker,
-                  });
-
-                  next();
-                });
-              }
+                }
+              });
             }
 
             //Create model
@@ -244,9 +228,5 @@ module.exports = function (Opts = {}) {
  * @property {Object} schema
  * @property {Object} options
  * @property {Array} plugins
- * @property {Object} hooks
- * @property {Function} hooks.preValidate
- * @property {Function} hooks.postValidate
- * @property {Function} hooks.preSave
- * @property {Function} hooks.postSave
+ * @property {Array<{type: string, preHandler: promise, postHandler: promise}>} hooks
  **/

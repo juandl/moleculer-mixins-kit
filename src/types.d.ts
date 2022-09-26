@@ -41,10 +41,10 @@ declare module "helpers/error" {
     /**
      * Custom helper extends of calss molecule error
      */
-    class ErrorResponse {
+    class ErrorResponse extends MoleculerError {
         constructor(message: any, code: any, type: any, data: any);
-        name: string;
     }
+    import { MoleculerError } from "moleculer";
 }
 declare module "index" {
     export namespace settings {
@@ -288,12 +288,11 @@ declare module "middlewares/mongooseDB" {
         schema: any;
         options: any;
         plugins: any[];
-        hooks: {
-            preValidate: Function;
-            postValidate: Function;
-            preSave: Function;
-            postSave: Function;
-        };
+        hooks: Array<{
+            type: string;
+            preHandler: Promise<any>;
+            postHandler: Promise<any>;
+        }>;
     };
 }
 declare module "middleware" {
@@ -327,23 +326,55 @@ declare module "validator" {
     export { Joi };
     import Joi = require("validations/joi");
 }
-declare module "helpers/nzbuilder" {
+declare module "helpers/mongo/filterBuilder" {
+    export = builderFilter;
+    /**
+     * @param {Object} opts
+     * @param {Object} opts.params
+     * @param {Array<{name: string, field: string, type: ('SEARCH' | 'DATE')}>} opts.filtersAllowed
+     * @returns
+     */
+    function builderFilter({ params, filtersAllowed }: {
+        params: any;
+        filtersAllowed: Array<{
+            name: string;
+            field: string;
+            type: ('SEARCH' | 'DATE');
+        }>;
+    }): {};
+}
+declare module "helpers/normalize/builder" {
     export = normalizeBuilder;
     /**
      * Normalize builder
      * this helper help to normalize data using lodash,
      * to get each value using keys and values
-     * @param {Object} builder
-     * @param {Object} builder.data - data to normalize
-     * @param {Array<{selector: string, field: string}>} builder.fields - fields to normalize
+     * @param {Object} opts
+     * @param {Object} opts.data - data to normalize
+     * @param {Array<{selector: string, field: string }>} opts.fields - fields to normalize
      *
      */
-    function normalizeBuilder({ data, fields }: {
+    function normalizeBuilder(opts: {
         data: any;
         fields: Array<{
             selector: string;
             field: string;
         }>;
     }): {};
+}
+declare module "helpers/normalize/cleaner" {
+    export = normalizeCleaner;
+    /**
+     * Clean object properties
+     * this helper will clean object with the fields mentioned
+     * @param {Object} opts
+     * @param {Object} opts.data - data to normalize
+     * @param {Array<string>} opts.fields - fields to normalize
+     *
+     */
+    function normalizeCleaner(opts: {
+        data: any;
+        fields: Array<string>;
+    }): any;
 }
 //# sourceMappingURL=types.d.ts.map
