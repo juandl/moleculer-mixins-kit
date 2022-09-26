@@ -8,7 +8,8 @@ const _ = require('lodash');
  *
  */
 const normalizeCleaner = (opts) => {
-  const { data, fields } = _.defaultsDeep(opts.data, {
+  const { data, fields } = _.defaultsDeep(opts, {
+    data: {},
     fields: [],
   });
 

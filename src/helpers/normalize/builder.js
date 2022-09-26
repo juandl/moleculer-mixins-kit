@@ -9,7 +9,7 @@ const _ = require('lodash');
  *
  */
 const normalizeBuilder = (opts) => {
-  const { data, fields } = _.defaultsDeep(opts.data, {});
+  const { data, fields } = _.defaultsDeep(opts, {});
 
   let entity = {};
 
