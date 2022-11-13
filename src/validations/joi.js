@@ -1,4 +1,4 @@
-const BaseValidator = require('moleculer').Validators.Base;
+const BaseValidator = require('moleculer').Validators.Fastest;
 const { ValidationError } = require('moleculer').Errors;
 
 const _ = require('lodash');
@@ -16,7 +16,7 @@ class JoiValidator extends BaseValidator {
       return (params) => this.validate(params, schema);
     } else if (this.validator) {
       //Use fastest-validator
-      return this.validator.compile(schema);
+      return this.validator.compile(_.cloneDeep(schema));
     }
   }
 
@@ -42,22 +42,26 @@ class JoiValidator extends BaseValidator {
   validate(params, schema) {
     let errors = [];
 
-    if (!this.Joi.isSchema(schema) && _.isFunction(schema)) {
-      throw new ValidationError('Not Joi Schema', null, {
-        message: 'No Schema Joi',
-      });
+    /**
+     * If not Joi schema, use fastest
+     */
+    if (!this.Joi.isSchema(schema)) {
+      const fastest = this.validator.validate(params, _.cloneDeep(schema));
+
+      if (fastest !== true) throw new ValidationError("Parameters validation error!", null, fastest);
+  
+      return true;
     }
 
     // Check if is merged schema
-    if (_.get(params, 'body', null)) {
-      params = params.body;
-    }
+    if (_.get(params, 'body')) params = params.body;
 
     //Validate schema
     const { error } = schema.validate(params, {
       abortEarly: true,
     });
 
+    //Check errors and normalize then
     if (!_.isEmpty(error)) {
       /**
        * Create Custom Error
