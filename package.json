@@ -1,6 +1,6 @@
 {
   "name": "moleculer-mixins-kit",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "description": "This makes Moleculer coding easier by taking the hassle out of working with models, brokers and etc",
   "main": "index.js",
   "types": "index.d.ts",
@@ -17,7 +17,7 @@
   "author": "juandl",
   "license": "MIT",
   "dependencies": {
-    "kleur": "^4.1.4",
+    "kleur": "^4.1.5",
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
@@ -32,10 +32,10 @@
   "devDependencies": {
     "eslint": "^8.11.0",
     "lint-staged": "^12.3.5",
-    "moleculer": "^0.14.19",
-    "npm-check": "^5.9.2",
+    "moleculer": "^0.14.26",
+    "npm-check": "^6.0.1",
     "prettier": "^2.5.1",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.4"
   },
   "repository": {
     "type": "git",

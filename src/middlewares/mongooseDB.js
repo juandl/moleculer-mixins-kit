@@ -142,7 +142,9 @@ module.exports = function (Opts = {}) {
             //Create schema model
             schema = new mongoose.Schema(model.schema, model.options);
 
-            //Assign plugins
+            /**
+             * Assign plugin if has
+             */
             if (!_.isEmpty(model.plugins)) {
               _.forEach(model.plugins, (plugin) => schema.plugin(plugin));
             }
@@ -192,6 +194,29 @@ module.exports = function (Opts = {}) {
               });
             }
 
+            /**
+             * Assign virtuals if has
+             */
+            if (!_.isEmpty(model.virtuals)) {
+              _.forEach(model.virtuals, (virtual) => {
+                //Generate virtual
+                const virtualDefined = schema.virtual(
+                  virtual.name,
+                  virtual.options
+                );
+
+                //Add get action
+                if (_.get(virtual, 'actions.get', null)) {
+                  virtualDefined.get(virtual.actions.get);
+                }
+
+                //Add set action
+                if (_.get(virtual, 'actions.set', null)) {
+                  virtualDefined.get(virtual.actions.set);
+                }
+              });
+            }
+
             //Create model
             schema = $mongod.model(model.name, schema);
 
@@ -228,5 +253,6 @@ module.exports = function (Opts = {}) {
  * @property {Object} schema
  * @property {Object} options
  * @property {Array} plugins
+ * @property {Array} virtuals
  * @property {Array<{type: string, preHandler: promise, postHandler: promise}>} hooks
  **/
