@@ -121,7 +121,7 @@ class JoiValidator extends BaseValidator {
      return params;
 
      // _.every is used because it will exit the loop when a false is returned
-   _.every(params, (value, key) => {
+   _.forEach(params, (value, key) => {
 
      if(!_.isEmpty(value)){
        data = value;
