@@ -53,27 +53,7 @@ class JoiValidator extends BaseValidator {
       return true;
     }
 
-    const getParams = (params) => {
-      // Check if is merged schema
-     let data = {};
-
-     if(!_.has(params, "body"))
-       return params;
-
-       // _.every is used because it will exit the loop when a false is returned
-     _.every(params, (value, key) => {
-
-       if(!_.isEmpty(value)){
-         data = value;
-         return false;
-       }
-       return true;
-     });
-
-     return data;
-   }
-
-   params = getParams(params);
+   params = this.getParams(params);
 
     //Validate schema
     const { error } = schema.validate(params, {
@@ -132,6 +112,26 @@ class JoiValidator extends BaseValidator {
 
     return true;
   }
+
+  getParams(params){
+    // Check if is merged schema
+   let data = {};
+
+   if(!_.has(params, "body"))
+     return params;
+
+     // _.every is used because it will exit the loop when a false is returned
+   _.every(params, (value, key) => {
+
+     if(!_.isEmpty(value)){
+       data = value;
+       return false;
+     }
+     return true;
+   });
+
+   return data;
+ }
 }
 
 module.exports = JoiValidator;
