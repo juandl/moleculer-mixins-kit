@@ -49,12 +49,11 @@ class JoiValidator extends BaseValidator {
       const fastest = this.validator.validate(params, _.cloneDeep(schema));
 
       if (fastest !== true) throw new ValidationError("Parameters validation error!", null, fastest);
-  
+
       return true;
     }
 
-    // Check if is merged schema
-    if (_.get(params, 'body')) params = params.body;
+   params = this.getParams(params);
 
     //Validate schema
     const { error } = schema.validate(params, {
@@ -113,6 +112,34 @@ class JoiValidator extends BaseValidator {
 
     return true;
   }
+
+  /**
+   *
+   * @param {Object} params - Parameters received before action
+   * @param {Object} params.body - (mergeParams disabled) body for POST requests
+   * @param {Object} params.query - (mergeParams disabled) query parameters
+   * @param {Object} params.params - (mergeParams disabled) URL parameters
+   * @returns {Object}
+   */
+  getParams(params){
+    // Check if is merged schema
+   let data = {};
+
+   if(!_.has(params, "body"))
+     return params;
+
+     // _.every is used because it will exit the loop when a false is returned
+   _.forEach(params, (value, key) => {
+
+     if(!_.isEmpty(value)){
+       data = value;
+       return false;
+     }
+     return true;
+   });
+
+   return data;
+ }
 }
 
 module.exports = JoiValidator;
