@@ -113,6 +113,14 @@ class JoiValidator extends BaseValidator {
     return true;
   }
 
+  /**
+   *
+   * @param {Object} params - Parameters received before action
+   * @param {Object} params.body - (mergeParams disabled) body for POST requests
+   * @param {Object} params.query - (mergeParams disabled) query parameters
+   * @param {Object} params.params - (mergeParams disabled) URL parameters
+   * @returns {Object}
+   */
   getParams(params){
     // Check if is merged schema
    let data = {};
