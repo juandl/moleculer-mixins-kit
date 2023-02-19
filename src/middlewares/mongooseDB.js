@@ -165,9 +165,9 @@ module.exports = function (Opts = {}) {
                  * https://mongoosejs.com/docs/middleware.html#order
                  */
                 if (hook.preHandler) {
-                  schema.pre(hook.type, async function (doc, next) {
+                  schema.pre(hook.type, async function (next) {
                     await hook.preHandler({
-                      doc,
+                      doc: this,
                       model: this.model,
                       broker: service.broker,
                     });
