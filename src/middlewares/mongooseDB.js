@@ -160,17 +160,23 @@ module.exports = function (Opts = {}) {
                 //if not type, skip it.
                 if (!hook.type) return;
 
+                let argOptions = {
+                  broker: service.broker,
+                };
+
                 /**
                  * Pre Hook
                  * https://mongoosejs.com/docs/middleware.html#order
                  */
                 if (hook.preHandler) {
-                  schema.pre(hook.type, async function (doc, next) {
-                    await hook.preHandler({
-                      doc,
+                  schema.pre(hook.type, async function (next) {
+                    //Assign args
+                    Object.assign(argOptions, {
+                      doc: this,
                       model: this.model,
-                      broker: service.broker,
                     });
+
+                    await hook.preHandler(argOptions);
 
                     next();
                   });
@@ -182,11 +188,17 @@ module.exports = function (Opts = {}) {
                  */
                 if (hook.postHandler) {
                   schema.post(hook.type, async function (doc, next) {
-                    await hook.postHandler({
+                    //Assign args
+                    Object.assign(argOptions, {
                       doc,
                       model: this.model,
-                      broker: service.broker,
                     });
+
+                    if (this.getQuery) {
+                      Object.assign(argOptions, { query: this.getQuery() });
+                    }
+
+                    await hook.postHandler(argOptions);
 
                     next();
                   });
