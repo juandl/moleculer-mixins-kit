@@ -128,15 +128,14 @@ class JoiValidator extends BaseValidator {
    if(!(_.has(params, "body") || _.has(params, "query") || _.has(params, "params")))
      return params;
 
-     // _.every is used because it will exit the loop when a false is returned
-   _.forEach(_.pick(params), (value, key) => {
+   _.forEach(keysOrder, (value) => {
+      data = _.get(params, value, {});
 
-     if(!_.isEmpty(value)){
-       data = value;
-       return false;
-     }
-     return true;
-   });
+      if(!_.isEmpty(data)){
+        return false;
+      }
+      return true;
+    });
 
    return data;
  }
