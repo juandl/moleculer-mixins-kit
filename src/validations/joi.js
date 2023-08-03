@@ -128,6 +128,8 @@ class JoiValidator extends BaseValidator {
    if(!(_.has(params, "body") || _.has(params, "query") || _.has(params, "params")))
      return params;
 
+    const keysOrder = ["body", "query", "params"];
+
    _.forEach(keysOrder, (value) => {
       data = _.get(params, value, {});
 
