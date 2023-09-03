@@ -143,6 +143,15 @@ module.exports = function (Opts = {}) {
             schema = new mongoose.Schema(model.schema, model.options);
 
             /**
+             * Defined custom indexes
+             */
+            if (!_.isEmpty(model.indexes)) {
+              _.forEach(model.indexes, (params) =>
+                schema.index(params.indexes, params.options)
+              );
+            }
+
+            /**
              * Assign plugin if has
              */
             if (!_.isEmpty(model.plugins)) {
@@ -224,7 +233,7 @@ module.exports = function (Opts = {}) {
 
                 //Add set action
                 if (_.get(virtual, 'actions.set', null)) {
-                  virtualDefined.get(virtual.actions.set);
+                  virtualDefined.set(virtual.actions.set);
                 }
               });
             }
