@@ -152,10 +152,13 @@ module.exports = function (Opts = {}) {
             }
 
             /**
-             * Assign plugin if has
+             * Assign plugin if has,
+             * expose service.broker.
              */
             if (!_.isEmpty(model.plugins)) {
-              _.forEach(model.plugins, (plugin) => schema.plugin(plugin));
+              _.forEach(model.plugins, (plugin) =>
+                schema.plugin(plugin, service.broker)
+              );
             }
 
             /**
