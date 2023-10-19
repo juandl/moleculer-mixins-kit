@@ -107,7 +107,7 @@ module.exports = function (Opts = {}) {
         models,
         (
           /**
-           * @type {ModelMongooseTypeSchema}
+           * @type {MoleculerMixinsKit.ModelSchemaMongoose}
            */
           model
         ) => {
@@ -139,11 +139,19 @@ module.exports = function (Opts = {}) {
               //Define default options
             } else model.options = DefaultConfig.model;
 
+            /**
+             * Assign discriminators (key)
+             */
+            if (!_.isEmpty(model.discriminator)) {
+              _.set(model.options, 'discriminatorKey', model.discriminator.key);
+            }
+
             //Create schema model
             schema = new mongoose.Schema(model.schema, model.options);
 
             /**
              * Defined custom indexes
+             * {indexes: [ { indexes: [], options } ]}
              */
             if (!_.isEmpty(model.indexes)) {
               _.forEach(model.indexes, (params) =>
@@ -152,8 +160,8 @@ module.exports = function (Opts = {}) {
             }
 
             /**
-             * Assign plugin if has,
-             * expose service.broker.
+             * Assign plugin if has and expose broker.
+             * {plugins: [ plugin ]}
              */
             if (!_.isEmpty(model.plugins)) {
               _.forEach(model.plugins, (plugin) =>
@@ -163,6 +171,7 @@ module.exports = function (Opts = {}) {
 
             /**
              * Create hooks model
+             * {hooks: [ { type : string, preHandler: function, postHandler: function  } ]}
              */
             if (!_.isEmpty(model.hooks)) {
               /**
@@ -220,6 +229,7 @@ module.exports = function (Opts = {}) {
 
             /**
              * Assign virtuals if has
+             * {virtuals: [ { name : string, options: object, actions: { get:function, set:function }  } ]}
              */
             if (!_.isEmpty(model.virtuals)) {
               _.forEach(model.virtuals, (virtual) => {
@@ -243,6 +253,16 @@ module.exports = function (Opts = {}) {
 
             //Create model
             schema = $mongod.model(model.name, schema);
+
+            /**
+             * Assign discriminators, create schema and assign to parent schema
+             * {discriminator: {key: string, schemas: { [key]: schema }}}
+             */
+            if (!_.isEmpty(model.discriminator)) {
+              _.forEach(model.discriminator.schemas, (schemaDiscr, name) => {
+                schema.discriminator(name, new mongoose.Schema(schemaDiscr));
+              });
+            }
 
             //Assign to the service parent
             _.set(mongodb, model.name, schema);
@@ -269,14 +289,3 @@ module.exports = function (Opts = {}) {
     },
   };
 };
-
-/**
- * Model Schema Tyoe
- * @typedef {Object} ModelMongooseTypeSchema
- * @property {String} name
- * @property {Object} schema
- * @property {Object} options
- * @property {Array} plugins
- * @property {Array} virtuals
- * @property {Array<{type: string, preHandler: promise, postHandler: promise}>} hooks
- **/

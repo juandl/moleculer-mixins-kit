@@ -1,5 +1,5 @@
-declare namespace BkrModelsKist {
-  interface QueryHelper {
+declare namespace MoleculerMixinsKit {
+  export interface QueryHelper {
     query: any;
     error: {
       message: string;
@@ -23,11 +23,18 @@ declare namespace BkrModelsKist {
     };
   }
 
-  interface ModelMongoose {
+  export interface ModelMongoose {
     name: string;
     schema: any;
     options: any;
     plugins: any[];
+    indexes: Array<{ indexes: Record<string, number>; options: object }>;
+    virtuals: Array<{
+      name: string;
+      options: object;
+      actions: { get: function; set: function };
+    }>;
+    discriminator: { key: string; schemas: Record<string, object> };
     hooks: Array<{
       type: string;
       preHandler: Promise<any>;
@@ -35,7 +42,5 @@ declare namespace BkrModelsKist {
     }>;
   }
 
-  type ModelSchemaMongoose = Array<ModelMongoose>;
+  export type ModelSchemaMongoose = Array<ModelMongoose>;
 }
-
-export = BkrModelsKist;
