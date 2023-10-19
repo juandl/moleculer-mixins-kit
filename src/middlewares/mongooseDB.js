@@ -143,7 +143,7 @@ module.exports = function (Opts = {}) {
              * Assign discriminators (key)
              */
             if (!_.isEmpty(model.discriminator)) {
-              _.set(model.options, 'discriminatorKey', model.discriminator.key);
+              _.set(model.options, 'discriminatorKey', 'type');
             }
 
             //Create schema model
@@ -259,8 +259,20 @@ module.exports = function (Opts = {}) {
              * {discriminator: {key: string, schemas: { [key]: schema }}}
              */
             if (!_.isEmpty(model.discriminator)) {
-              _.forEach(model.discriminator.schemas, (schemaDiscr, name) => {
-                schema.discriminator(name, new mongoose.Schema(schemaDiscr));
+              /**
+               * Create each model separated
+               */
+              _.forEach(model.discriminator, (inherentScheme, name) => {
+                /**
+                 * Discriminator model
+                 */
+                const inherent = schema.discriminator(
+                  _.capitalize(name),
+                  new mongoose.Schema(inherentScheme)
+                );
+
+                //Assign to the service parent
+                _.set(mongodb, `${model.name}:${name}`, inherent);
               });
             }
 

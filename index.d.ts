@@ -32,9 +32,9 @@ declare namespace MoleculerMixinsKit {
     virtuals: Array<{
       name: string;
       options: object;
-      actions: { get: function; set: function };
+      actions: { get: Function; set: Function };
     }>;
-    discriminator: { key: string; schemas: Record<string, object> };
+    discriminator: Record<string, object>;
     hooks: Array<{
       type: string;
       preHandler: Promise<any>;
