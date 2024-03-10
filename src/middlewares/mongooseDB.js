@@ -63,9 +63,10 @@ module.exports = function (Opts = {}) {
 
       try {
         //Create instance mongoose
-        broker.$mongod = await mongoose
-          .createConnection(Config.url, Config.db)
-          .asPromise();
+        await mongoose
+          .connect(Config.url, Config.db);
+
+        broker.$mongod = mongoose.connection;
 
         this.logger.info(
           kleur.bgYellow(
