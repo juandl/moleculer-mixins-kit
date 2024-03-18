@@ -1070,10 +1070,10 @@ fast-levenshtein@^2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fastest-validator@^1.15.0:
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/fastest-validator/-/fastest-validator-1.15.0.tgz#580cf08a7f6b662c4d1ec49a7d61125b55e972e1"
-  integrity sha512-iSGBqeRSD3O8porodq42sk0kxSC2DTyszFcrLIjQNB5fqlG2qH0sok3BSyl0lR6IKmz5Bu7ZO06i7z16XcMihw==
+fastest-validator@^1.17.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/fastest-validator/-/fastest-validator-1.17.0.tgz#0c032e9c42c40a237d24b20be187f732ebdcc062"
+  integrity sha512-37U/JDP72QSFqcvNnO81f0Aeu9og+5I3mc55b2v2RbV0S2I7KvQEdBtrFeIvaYVgam1bDUgy9F9AK9HolByogA==
 
 fastq@^1.6.0:
   version "1.13.0"
@@ -1436,10 +1436,10 @@ invariant@2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-ipaddr.js@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-2.0.1.tgz#eca256a7a877e917aeb368b0a7497ddf42ef81c0"
-  integrity sha512-1qTgH9NG+IIJ4yfKs2e6Pp1bZg8wbDbKHT21HrLIeYBTRLgMYKnMTPAuI3Lcs61nfx5h1xlXnbJtH1kX5/d/ng==
+ipaddr.js@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-2.1.0.tgz#2119bc447ff8c257753b196fc5f1ce08a4cdf39f"
+  integrity sha512-LlbxQ7xKzfBusov6UMi4MFpEg0m+mAm9xyNGEduwXMEDuf4WfzB/RZwMVYEd7IKGvh4IUkEXYxtAVu9T3OelJQ==
 
 is-arrayish@^0.2.1:
   version "0.2.1"
@@ -1879,16 +1879,16 @@ minimist@^1.2.0:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
-moleculer@^0.14.26:
-  version "0.14.26"
-  resolved "https://registry.yarnpkg.com/moleculer/-/moleculer-0.14.26.tgz#2765876b3f2d10d891bdad62ba0b3f0233d65965"
-  integrity sha512-s29j0CoMQnOEXUaqlZ/WBRgTNrrraHaEvb+eu4QS8vfEejSn6FOV/R64UoCQ/7M3hiI/Prv78OKp40XVSu4prQ==
+moleculer@^0.14.32:
+  version "0.14.32"
+  resolved "https://registry.yarnpkg.com/moleculer/-/moleculer-0.14.32.tgz#93abe48d79f989fe4104d56534ff40d60c91318b"
+  integrity sha512-N5RXKS9Z01Gl6gLkf3snLgYbzU0bLci1WNEIuy2D+cjEg7i3XEArsiFHKnmNYWF6L5DajVrT8dw9EqGgvmjmOw==
   dependencies:
     args "^5.0.3"
     eventemitter2 "^6.4.9"
-    fastest-validator "^1.15.0"
+    fastest-validator "^1.17.0"
     glob "^7.2.0"
-    ipaddr.js "^2.0.1"
+    ipaddr.js "^2.1.0"
     kleur "^4.1.5"
     lodash "^4.17.21"
     lru-cache "^6.0.0"
